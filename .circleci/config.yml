@@ -64,7 +64,7 @@ jobs:
 
   test-frontend:
     docker:
-      name: node/default
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - node/with-cache:
@@ -73,7 +73,7 @@ jobs:
                 
   test-backend:
     docker:
-      name: node/default
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - node/with-cache:
