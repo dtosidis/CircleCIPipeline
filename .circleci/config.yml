@@ -95,6 +95,10 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -119,10 +123,6 @@ jobs:
             --filters "Name=tag:project,Values=udapeople" \
             --output text >> ansible/inventory.txt
             cat ansible/inventory.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
 
   configure-infrastructure:
     docker:
