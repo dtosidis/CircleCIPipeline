@@ -94,6 +94,8 @@ jobs:
     docker:
       - image: amazon/aws-cli
     working_directory: ~/workspace
+    environment:
+      BACKEND_IP: ""
     steps:
       - checkout
       - run: yum install -y tar
