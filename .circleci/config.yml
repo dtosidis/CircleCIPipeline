@@ -124,8 +124,6 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-            - project/backend/
-
   configure-infrastructure:
     docker:
       - image: python:3.9.0-alpine
