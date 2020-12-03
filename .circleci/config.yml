@@ -156,14 +156,12 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            touch migrations.txt
-            npm i
-            npm run migrations >> migrations.txt
+            npm run migrations > migrations.log
       - run:
           name: Send migration results to memstash
           command: |
             cd backend
-            if grep -q "has been executed successfully" migrations.txt
+            if grep -q "has been executed successfully" migrations.log
             then
             curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             else
