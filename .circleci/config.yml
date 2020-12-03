@@ -155,10 +155,10 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            touch migrations
             cd backend
-            npm run migrations > migrations.txt
-            cat migration_results.txt
+            touch migrations.txt
+            npm i
+            npm run migrations >> migrations.txt
       - run:
           name: Send migration results to memstash
           command: |
