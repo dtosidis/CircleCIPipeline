@@ -175,7 +175,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: amazon/aws-cli #      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
@@ -284,18 +284,18 @@ workflows:
         #          requires: [build-backend]
         #      - scan-frontend:
         #          requires: [build-frontend]
-      - deploy-infrastructure:
+        #      - deploy-infrastructure:
         #          requires: [test-backend, scan-frontend, scan-backend]
-                  filters:
-                    branches:
-                      only: #[test-feature-branch]
-                        - master
-      - configure-infrastructure :
-          requires: [deploy-infrastructure]
-      - run-migrations :
-          requires: [configure-infrastructure]
+        #                  filters:
+        #                    branches:
+        #                      only: #[test-feature-branch]
+        #                        - master
+        #      - configure-infrastructure :
+        #          requires: [deploy-infrastructure]
+        #      - run-migrations :
+        #          requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [run-migrations]
+              #          requires: [run-migrations]
 #      - deploy-backend:
 #          requires: [run-migrations]
 #      - smoke-test:
