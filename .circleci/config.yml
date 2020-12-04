@@ -171,7 +171,7 @@ jobs:
             else
             curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             fi
-      - revert-migrations      
+            # - revert-migrations      
 
   deploy-frontend:
     docker:
