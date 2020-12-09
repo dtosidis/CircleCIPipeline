@@ -175,39 +175,27 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: circleci/python:latest
+      - image: circleci/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-build]
       - run:
-          name: Install NVM
+          name: Install dependencies
           command: |
-            sudo apt-get install nodejs
-            sudo apt-get install npm
+            sudo apt install python-pip python-dev
             sudo pip install awscli
-      - attach_workspace:
-          at: ~/
       - run:
-          name: NPM Install
+          name: Get backend url & Deploy frontend objects
           command: |
-            cd frontend
-            npm install
-      - run:
-          name: npm build
-          command: |
-            BACKEND_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
+            BACKEND_IP=$(curl -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/ipaddress)
+            echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL=$API_URL" >> frontend/.env
             echo "${API_URL}"
             cd frontend
             npm run build
-      - run:
-          name: take a look
-          command: |
-            ls frontend
-      - run:
-          name: copy files
-          command: |
-            ls
-            aws s3 cp frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID} --recursive
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
 
             #      - image: amazon/aws-cli #      - image: circleci/node:13.8.0
             #    steps:
@@ -223,7 +211,7 @@ jobs:
             #          name: Get backend url
             #          command: |
             #            BACKEND_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
-            #            export API_URL="http://${BACKEND_IP}:3030"
+            #            #            export API_URL="http://${BACKEND_IP}:3030"
             #            echo "${API_URL}"
             #      - run:
             #          name: Deploy frontend objects
