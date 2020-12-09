@@ -178,11 +178,11 @@ jobs:
       - image: amazon/aws-cli #      - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            curl -sL https://rpm.nodesource.com/setup_12.x | bash -  # BACKEND_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-ip)
-            yum -y install nodejs #npm tar gzip jq git
+        #      - run:
+        #          name: Install dependencies
+          #          command: |
+          #            curl -sL https://rpm.nodesource.com/setup_12.x | bash -  # BACKEND_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-ip)
+          #            yum -y install nodejs #npm tar gzip jq git
       - run:
           name: Get backend url
           command: |
@@ -286,18 +286,18 @@ workflows:
         #          requires: [build-backend]
         #      - scan-frontend:
         #          requires: [build-frontend]
-        #      - deploy-infrastructure:
-              #          requires: [test-backend, scan-frontend, scan-backend]
-              #          filters:
-                          #                    branches:
-                          #                      only: #[test-feature-branch]
-                          #                        - master
-                          #      - configure-infrastructure :
-                          #          requires: [deploy-infrastructure]
-                          #      - run-migrations :
-                          #          requires: [configure-infrastructure]
-       - deploy-frontend #:
-              #          requires: [run-migrations]
+      - deploy-infrastructure:
+          requires: [test-backend, scan-frontend, scan-backend]
+          filters:
+                    branches:
+                      only: #[test-feature-branch]
+                        - master
+      - configure-infrastructure :
+          requires: [deploy-infrastructure]
+      - run-migrations :
+          requires: [configure-infrastructure]
+       - deploy-frontend :
+          requires: [run-migrations]
 #      - deploy-backend:
 #          requires: [run-migrations]
 #      - smoke-test:
