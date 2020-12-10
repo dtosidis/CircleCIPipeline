@@ -223,22 +223,24 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
 
-#  smoke-test:
-#    docker:
-      # Lightweight Docker image 
-#    steps:
-      # Checkout code from git
-#       - run:
-#          name: Install dependencies
-#          command: |
-            # your code here
-#      - run:
-#          name: Get backend url
-#          command: |
-            # your code here
-#      - run:
-#          name: Backend smoke test.
-#          command: |
+  smoke-test:
+    docker:
+      - image: alpine:latest 
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl
+            pip install awscli
+      - run:
+          name: Get backend url
+          command: |
+            BACKEND_IP=$(curl -H "token: d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/backend-ip)
+      - run:
+          name: Backend smoke test.
+          command: |
+            curl "http://${BACKEND_IP}:3030/api/status"
             # your code here
 #      - run:
 #          name: Frontend smoke test.
@@ -293,21 +295,21 @@ workflows:
         #          requires: [build-backend]
         #      - scan-frontend:
         #          requires: [build-frontend]
-      - deploy-infrastructure:
+        #      - deploy-infrastructure:
               #          requires: [test-backend, scan-frontend, scan-backend]
-                  filters:
-                    branches:
-                      only: #[test-feature-branch]
-                        - master
-      - configure-infrastructure :
-          requires: [deploy-infrastructure]
-      - run-migrations :
-          requires: [configure-infrastructure]
+              #                  filters:
+              #                    branches:
+              #                      only: #[test-feature-branch]
+              #                        - master
+              #      - configure-infrastructure :
+              #          requires: [deploy-infrastructure]
+              #      - run-migrations :
+              #          requires: [configure-infrastructure]
           #      - deploy-frontend :
           #          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
-#      - smoke-test:
+          #      - deploy-backend:
+          #          requires: [run-migrations]
+      - smoke-test #:
 #          requires: [deploy-backend, deploy-frontend]
 #      - cloudfront-update:
 #          requires: [smoke-test]
