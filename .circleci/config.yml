@@ -236,6 +236,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
+            cd .circleci/ansible/
             ls
             BACKEND_IP=$(tail -n 1 inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030/api/status
