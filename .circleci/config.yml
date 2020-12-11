@@ -236,17 +236,16 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            BACKEND_IP=$(curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
-              --request GET https://api.memstash.io/values/backend-ip)
+            BACKEND_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
       - run:
           name: Backend smoke test.
           command: |
             BACKEND_TEST_RESULT=$(curl http://${BACKEND_IP}:3030/api/status)
             if $( echo $BACKEND_TEST_RESULT | grep -q "ok" )
             then
-            return 0
+             return 0
             else
-            return 1
+             return 1
             fi
 #      - run:
 #          name: Frontend smoke test.
