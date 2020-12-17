@@ -22,7 +22,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS = $(curl -H "token: d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID})
+                  SUCCESS = $(curl -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID:0:7})
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -119,7 +119,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
               cat .circleci/ansible/inventory.txt
-              curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
+          curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID:0:7}" \
               --request PUT --data "${BACKEND_IP}" https://api.memstash.io/values/backend-ip
       - persist_to_workspace:
           root: ~/
@@ -165,9 +165,9 @@ jobs:
             cd backend
             if grep -q "has been executed successfully" migrations.txt
             then
-            curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+          curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             else
-            curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
+          curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
             # - revert-migrations      
 
@@ -233,7 +233,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            BACKEND_IP=$(curl -H "token: $d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID})
+            BACKEND_IP=$(curl -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
             echo $BACKEND_IP
             BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
             echo $BACKEND_URL
