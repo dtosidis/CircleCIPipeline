@@ -11,8 +11,8 @@ commands:
           when: on_fail
           command: |
             aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
-            aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}"
-            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
+            aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
@@ -233,7 +233,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            BACKEND_IP=$(curl -H "token: $d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID:0:7})
+            BACKEND_IP=$(curl -H "token: $d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/BACKEND_IP_${CIRCLE_WORKFLOW_ID})
             echo $BACKEND_IP
             BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
             echo $BACKEND_URL
