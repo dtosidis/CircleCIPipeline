@@ -126,7 +126,6 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment
-        when: on_fail
   
   configure-infrastructure:
     docker:
@@ -147,7 +146,6 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment
-        when: on_fail
 
   run-migrations:
     docker:
@@ -197,7 +195,6 @@ jobs:
             npm run build
             aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
       - destroy-environment
-        when: on_fail
                     
   deploy-backend:
     docker:
@@ -222,7 +219,6 @@ jobs:
             cd .circleci/ansible/
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
-        when: on_fail
 
   smoke-test:
     docker:
@@ -261,7 +257,6 @@ jobs:
               return 1
             fi
       - destroy-environment
-      when: on_fail
 
       # Here's where you will add some code to rollback on failure  
 
