@@ -20,16 +20,16 @@ commands:
       # Add parameter here     
     steps:
       - run:
-          name: Revert migrations
+              #          name: Revert migrations
           #          when: on_fail
           command: |
                   #            SUCCESS = $(curl -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID})
-            if(( $SUCCESS==1 )); 
-            then
+                  #            if(( $SUCCESS==1 )); 
+                  #            then
             #              cd ~/project/backend
             #              npm install
             #              npm run migration:revert
-            fi
+            #            fi
             
 jobs:
   build-frontend:
