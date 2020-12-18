@@ -238,18 +238,18 @@ jobs:
             echo $BACKEND_IP
             BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
             echo $BACKEND_URL
-      - run:
-          name: Backend smoke test.
-          command: |
+            #      - run:
+            #          name: Backend smoke test.
+            #          command: |
                   #            if $( echo $BACKEND_URL | grep "\"status\":\"ok\"" )
                   #            then
                   #             return 0
                   #            else
                   #             return 1
                   #            fi
-      - run:
-          name: Frontend smoke test.
-          command: |
+                  #      - run:
+                  #          name: Frontend smoke test.
+                  #          command: |
 #            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-eu-central-1.amazonaws.com/#/employees"
 #            if curl -s ${URL} | grep "Welcome"
 #            then
