@@ -246,10 +246,10 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-                  #            echo "Printing Backend Url"
-                  #            echo $(sed -n 2p .circleci/ansible/inventory.txt)
-                  #            echo "Curling > $(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status"
-                  #            curl http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
+            echo "Printing Backend Url"
+            echo $(sed -n 2p .circleci/ansible/inventory.txt)
+            echo "Curling > $(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status"
+            curl http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
             if curl -s http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
             #            if $($BACKEND_URL | grep "\"status\":\"ok\"" )
             then
