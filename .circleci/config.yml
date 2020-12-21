@@ -246,9 +246,9 @@ jobs:
                   #            if $($BACKEND_URL | grep "\"status\":\"ok\"" )
             if curl -s http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
             then
-             return 0
+              return 0
             else
-             return 1
+              return 1
             fi
       - run:
           name: Frontend smoke test.
