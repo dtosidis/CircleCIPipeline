@@ -187,7 +187,11 @@ jobs:
           command: |
             export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
+            echo ENVIRONMENT=production > "frontend/.env"
+            echo NODE_ENV=production >> "frontend/.env"
+            echo API_URL=http://$(sed -n 2p .circleci/ansible/inventory.txt):3030 >> "frontend/.env"
+            cat frontend/.env
+            cat .circleci/ansible/inventory.txt
       - run:
           name: Deploy frontend objects
           command: |
