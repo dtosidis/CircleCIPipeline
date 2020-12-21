@@ -236,7 +236,9 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
+                  #            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
+            cd .circleci/ansible
+            BACKEND_IP=$(cat inventory)
             echo $BACKEND_IP
             BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
             echo $BACKEND_URL
