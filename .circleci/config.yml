@@ -235,9 +235,9 @@ jobs:
           fingerprints: ["2e:99:4a:21:39:39:02:dc:a4:cb:ee:9b:37:d6:cf:85"]
       - attach_workspace:
           at: ~/
-          #      - run:
-              #          name: Get backend url
-          #          command: |
+      - run:
+          name: Get backend url
+          command: |
                   #            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
                   #            echo $BACKEND_IP
                   #            BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
