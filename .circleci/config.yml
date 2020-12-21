@@ -231,8 +231,8 @@ jobs:
           command: |
             apk add --update curl
             pip install awscli
-            #      - add_ssh_keys:
-            #          fingerprints: ["2e:99:4a:21:39:39:02:dc:a4:cb:ee:9b:37:d6:cf:85"]
+      - add_ssh_keys:
+          fingerprints: ["2e:99:4a:21:39:39:02:dc:a4:cb:ee:9b:37:d6:cf:85"]
       - attach_workspace:
           at: ~/
           #      - run:
@@ -242,7 +242,7 @@ jobs:
                   #            echo $BACKEND_IP
                   #            BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
                   #            echo $BACKEND_URL
-                  #            export BACKEND_URL=$(sed -n 2p .circleci/ansible/inventory.txt)
+            export BACKEND_URL=$(sed -n 2p .circleci/ansible/inventory.txt)
       - run:
           name: Backend smoke test.
           command: |
