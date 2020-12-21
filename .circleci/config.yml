@@ -118,14 +118,14 @@ jobs:
             aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text >> .circleci/ansible/inventory
-            cat .circleci/ansible/inventory
+              --output text >> .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
               --request PUT --data "${BACKEND_IP}" https://api.memstash.io/values/backend-ip
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory
+            - project/.circleci/ansible/inventory.txt
               #      - destroy-environment
   
   configure-infrastructure:
@@ -185,7 +185,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory) #            BACKEND_IP=$(tail -n 1 inventory.txt)
+            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
@@ -236,31 +236,29 @@ jobs:
       - run:
           name: Get backend url
           command: |
-                  #            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
-            cd .circleci/ansible
-            BACKEND_IP=$(cat inventory)
-            echo $BACKEND_IP
+            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
+            #            echo $BACKEND_IP
             BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
-            echo $BACKEND_URL
-            #      - run:
-            #          name: Backend smoke test.
-            #          command: |
-                  #            if $( echo $BACKEND_URL | grep "\"status\":\"ok\"" )
-                  #            then
-                  #             return 0
-                  #            else
-                  #             return 1
-                  #            fi
-                  #      - run:
-                  #          name: Frontend smoke test.
-                  #          command: |
-#            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-eu-central-1.amazonaws.com/#/employees"
-#            if curl -s ${URL} | grep "Welcome"
-#            then
-#              return 1
-#            else
-#              return 1
-#            fi
+            #            echo $BACKEND_URL
+      - run:
+          name: Backend smoke test.
+          command: |
+            if $($BACKEND_URL | grep "\"status\":\"ok\"" )
+            then
+             return 0
+            else
+             return 1
+            fi
+      - run:
+          name: Frontend smoke test.
+          command: |
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-eu-central-1.amazonaws.com/#/employees"
+            if curl -s ${URL} | grep "Welcome"
+            then
+              return 1
+            else
+              return 1
+            fi
             #      - destroy-environment
 
       # Here's where you will add some code to rollback on failure  
