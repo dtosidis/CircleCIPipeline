@@ -235,8 +235,8 @@ jobs:
           command: |
             apk add --update curl
             pip install awscli
-      - add_ssh_keys:
-          fingerprints: ["2e:99:4a:21:39:39:02:dc:a4:cb:ee:9b:37:d6:cf:85"]
+            #      - add_ssh_keys:
+            #          fingerprints: ["2e:99:4a:21:39:39:02:dc:a4:cb:ee:9b:37:d6:cf:85"]
       - attach_workspace:
           at: ~/
           #      - run:
@@ -253,8 +253,8 @@ jobs:
             echo "Printing Backend Url"
             echo $(sed -n 2p .circleci/ansible/inventory.txt)
             echo "Curling > $(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status"
-            curl http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
-            if curl -s http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
+            curl --ipv4 http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
+            if curl --ipv4 -s http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
             #            if $($BACKEND_URL | grep "\"status\":\"ok\"" )
             then
               return 0
