@@ -253,8 +253,8 @@ jobs:
             echo "Printing Backend Url"
             echo $(sed -n 2p .circleci/ansible/inventory.txt)
             echo "Curling > $(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status"
-            curl --ipv4 http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
-            if curl --ipv4 -s http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
+            curl -x "" http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
+            if curl -x "" -s http://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
             #            if $($BACKEND_URL | grep "\"status\":\"ok\"" )
             then
               return 0
