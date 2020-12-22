@@ -118,10 +118,11 @@ jobs:
             aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text > .circleci/ansible/inventory.txt
+              --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" \
               --request PUT --data "${BACKEND_IP}" https://api.memstash.io/values/backend-ip
+            netstat -natp
       - persist_to_workspace:
           root: ~/
           paths:
@@ -189,6 +190,7 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             cat .circleci/ansible/inventory.txt
+            netstat -natp
       - run:
           name: Deploy frontend objects
           command: |
@@ -232,32 +234,20 @@ jobs:
           command: |
             apk add --update curl
             pip install awscli
-            #      - add_ssh_keys:
-            #          fingerprints: ["2e:99:4a:21:39:39:02:dc:a4:cb:ee:9b:37:d6:cf:85"]
       - attach_workspace:
           at: ~/
-          #      - run:
-              #          name: Get backend url
-          #          command: |
-                  #            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
-                  #            echo $BACKEND_IP
-                  #            BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
-                  #            echo $BACKEND_URL
+      - run:
+          name: Get backend url
+            command: |
+            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
+            echo $BACKEND_IP
+            export BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
+            echo $BACKEND_URL
       - run:
           name: Backend smoke test.
           command: |
-            echo "Printing Backend Url"
-            echo $(sed -n 2p .circleci/ansible/inventory.txt)
-            echo "Curling > $(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status"
             netstat -natp
-            curl https://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
-            if curl -s https://$(sed -n 2p .circleci/ansible/inventory.txt):3030/api/status
-            #            if $($BACKEND_URL | grep "\"status\":\"ok\"" )
-            then
-              return 0
-            else
-              return 1
-            fi
+            #            curl https://$(BACKEND_URL)
       - run:
           name: Frontend smoke test.
           command: |
