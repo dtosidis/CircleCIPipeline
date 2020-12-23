@@ -1,4 +1,4 @@
-version: 2.d5ca20be-af73-4608-a298-ee5f8c1849651
+version: 2.1
 
 commands:
   destroy-environment:
