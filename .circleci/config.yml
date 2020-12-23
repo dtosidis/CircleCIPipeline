@@ -126,7 +126,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-              #      - destroy-environment
+      - destroy-environment
   
   configure-infrastructure:
     docker:
@@ -146,7 +146,7 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-            #      - destroy-environment
+      - destroy-environment
 
   run-migrations:
     docker:
@@ -185,7 +185,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt)
+            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             cat .circleci/ansible/inventory.txt
@@ -196,7 +196,7 @@ jobs:
             npm i
             npm run build
             aws s3 cp ./dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive 
-            #      - destroy-environment
+      - destroy-environment
                     
   deploy-backend:
     docker:
@@ -220,7 +220,7 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible/
             ansible-playbook -i inventory.txt deploy-backend.yml
-            #      - destroy-environment
+      - destroy-environment
 
   smoke-test:
     docker:
@@ -237,7 +237,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt) #            BACKEND_IP=$(tail -n 1 inventory.txt) #            BACKEND_IP=$(curl -H "${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/backend-${CIRCLE_WORKFLOW_ID:0:7})
+            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt)
             echo $BACKEND_IP
             export BACKEND_URL=$(curl http://${BACKEND_IP}:3030/api/status)
             echo $BACKEND_URL
@@ -256,7 +256,7 @@ jobs:
             else
               return 1
             fi
-            #      - destroy-environment
+      - destroy-environment
 
       # Here's where you will add some code to rollback on failure  
 
