@@ -1,4 +1,4 @@
-version: 2.1
+version: 2.d5ca20be-af73-4608-a298-ee5f8c1849651
 
 commands:
   destroy-environment:
@@ -23,7 +23,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS = $(curl -H "token:${CIRCLE_WORKFLOW_ID:0:7}" --request GET https://api.memstash.io/values/<< pipeline.id >>_migrations)
+            SUCCESS = $(curl -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID})
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -164,9 +164,9 @@ jobs:
             cd backend
             if grep -q "has been executed successfully" migrations.txt
             then
-            curl -H "Content-Type: text/plain" -H "token:${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "1" https://api.memstash.io/values/<< pipeline.id >>_migrations
+            curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "1" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             else
-            curl -H "Content-Type: text/plain" -H "token:${CIRCLE_WORKFLOW_ID:0:7}" --request PUT --data "0" https://api.memstash.io/values/<< pipeline.id >>_migrations
+            curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             fi
       - revert-migrations      
 
@@ -250,7 +250,7 @@ jobs:
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-eu-central-1.amazonaws.com/#/employees"
             if curl -s ${URL} | grep "Welcome"
             then
-              return 1
+              return 0
             else
               return 1
             fi
