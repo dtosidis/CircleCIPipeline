@@ -266,7 +266,7 @@ jobs:
           name: Install dependencies
           command: |
             yum -y install tar gzip
-       - run:
+      - run:
           name: Update cloudfront distribution
           command: |
             export OldWorkflowID=$(aws cloudformation list-exports \
