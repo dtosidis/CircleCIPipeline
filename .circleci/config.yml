@@ -168,7 +168,7 @@ jobs:
             else
             curl -H "Content-Type: text/plain" -H "token:d5ca20be-af73-4608-a298-ee5f8c184965" --request PUT --data "0" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
             fi
-      - revert-migrations      
+            #      - revert-migrations      
 
   deploy-frontend:
     docker:
@@ -254,25 +254,43 @@ jobs:
             else
               return 1
             fi
-      - revert-migrations
+            #      - revert-migrations
       - destroy-environment
 
-      # Here's where you will add some code to rollback on failure  
+  cloudfront-update:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip
+       - run:
+          name: Update cloudfront distribution
+          command: |
+            export OldWorkflowID=$(aws cloudformation list-exports \
+            --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+          
+            export STACKS=$(aws cloudformation list-stacks \
+            --query "StackSummaries[*].StackName" \
+            --stack-status-filter CREATE_COMPLETE \
+            --no-paginate --output text)
 
-#  cloudfront-update:
-#      docker:
-      # Docker image here that supports AWS CLI
-#    steps:
-      # Checkout code from git
-#      - run:
-#          name: Install dependencies
-#          command: |
-            # your code here
-#       - run:
-#          name: Update cloudfront distribution
-#          command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure  
+            echo OldWorkflowID: "$OldWorkflowID"
+
+            aws cloudformation deploy \
+            --template-file /root/project/.circleci/files/cloudfront.yml \
+            --stack-name udapeople-cloudfront \
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople
+
+            curl -H "Content-Type: text/plain" -H "token: OldWorkflowID-${CIRCLE_WORKFLOW_ID}" \
+            --request PUT \
+            --data "$OldWorkflowID" https://api.memstash.io/values/OldWorkflowID
+      
+      - destroy-environment  
 
 cleanup:
     docker:
@@ -306,23 +324,23 @@ workflows:
         #          requires: [build-backend]
         #      - scan-frontend:
         #          requires: [build-frontend]
-      - deploy-infrastructure #:
+        #      - deploy-infrastructure #:
               #          requires: [test-backend, scan-frontend, scan-backend]
               #                  filters:
               #                    branches:
               #                      only: [test-feature-branch]
               #                        - master
-      - configure-infrastructure :
-          requires: [deploy-infrastructure]
-      - run-migrations :
-          requires: [configure-infrastructure]
-      - deploy-frontend :
-          requires: [run-migrations]
-      - deploy-backend :
-          requires: [run-migrations]
-      - smoke-test :
-          requires: [deploy-backend, deploy-frontend]
-          #      - cloudfront-update:
+              #      - configure-infrastructure :
+              #          requires: [deploy-infrastructure]
+              #      - run-migrations :
+              #          requires: [configure-infrastructure]
+              #      - deploy-frontend :
+              #          requires: [run-migrations]
+              #      - deploy-backend :
+              #          requires: [run-migrations]
+              #      - smoke-test :
+              #          requires: [deploy-backend, deploy-frontend
+     - cloudfront-update:
           #          requires: [smoke-test]
           #      - cleanup:
           #          requires: [cloudfront-update]
