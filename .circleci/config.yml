@@ -288,7 +288,7 @@ jobs:
 
       - destroy-environment  
 
-cleanup:
+  cleanup:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -346,5 +346,5 @@ workflows:
               #          requires: [deploy-backend, deploy-frontend
               #     - cloudfront-update :
           #          requires: [smoke-test]
-     - cleanup #:
+      - cleanup #:
           #          requires: [cloudfront-update]
