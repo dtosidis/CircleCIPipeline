@@ -319,22 +319,24 @@ jobs:
           command: |
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
-            #              destroy-environment
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
             
 workflows:
   default:
     jobs:
-            #      - build-frontend
-            #      - build-backend
-        #      - test-frontend:
-        #          requires: [build-frontend]
-        #      - test-backend:
-        #          requires: [build-backend]
-        #      - scan-backend:
-        #          requires: [build-backend]
-        #      - scan-frontend:
-        #          requires: [build-frontend]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
         #      - deploy-infrastructure #:
               #          requires: [test-backend, scan-frontend, scan-backend]
               #                  filters:
@@ -351,7 +353,7 @@ workflows:
               #          requires: [run-migrations]
               #      - smoke-test :
               #          requires: [deploy-backend, deploy-frontend
-     - cloudfront-update #:
+              #     - cloudfront-update #:
           #          requires: [smoke-test]
           #      - cleanup #:
           #          requires: [cloudfront-update]
